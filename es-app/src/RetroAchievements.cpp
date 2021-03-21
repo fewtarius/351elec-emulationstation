@@ -76,7 +76,8 @@ const std::map<PlatformId, unsigned short> cheevosConsoleID
 	{ CHANNELF, 57 },
 	{ ZX_SPECTRUM, 59 },
 	{ NINTENDO_GAME_AND_WATCH, 60 },
-	{ NINTENDO_3DS, 62 }
+	{ NINTENDO_3DS, 62 },
+	{ TURBOGRAFX_CD, 63 }
 
 	// { VIC20, 34 },
 	//	{ CDI, 42 },
