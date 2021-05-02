@@ -17,7 +17,8 @@ SliderComponent::SliderComponent(Window* window, float min, float max, float inc
 	// some sane default value
 	mValue = (max + min) / 2;
 
-	mKnob.setOrigin(0.5f, 0.5f);
+	mKnob.setOrigin((min*0.1f), 0.5f); // Parameters: width, height
+	// mKnob.setOrigin(0.5f, 0.5f);
 	mKnob.setImage(ThemeData::getMenuTheme()->Icons.knob);
 	mKnob.setColorShift(mColor);
 	
