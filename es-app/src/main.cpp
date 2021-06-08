@@ -552,10 +552,10 @@ int main(int argc, char* argv[])
 
 	ApiSystem::getInstance()->getIpAdress(); // batocera
 
-	//if (systemConf->getBool("updates.enabled")) 
-	//{ 
-	//	NetworkThread* nthread = new NetworkThread(&window); 
-	//}
+	if (systemConf->getBool("updates.enabled")) 
+	{ 
+		NetworkThread* nthread = new NetworkThread(&window); 
+	}
 
 	//run the command line scraper then quit
 	if(scrape_cmdline)

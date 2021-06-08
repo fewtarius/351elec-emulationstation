@@ -160,7 +160,7 @@ GuiMenu::GuiMenu(Window *window, bool animate) : GuiComponent(window), mMenu(win
 #endif
 
 		addEntry(_("SCRAPE").c_str(), true, [this] { openScraperSettings(); }, "iconScraper");
-		addEntry(_("DOWNLOADS"), true, [this] { openUpdatesSettings(); }, "iconUpdates");
+		addEntry(_("UPDATES & DOWNLOADS"), true, [this] { openUpdatesSettings(); }, "iconUpdates");
 #ifdef _ENABLEEMUELEC
                if (isFullUI)
                        addEntry(_("EMULATIONSTATION SETTINGS").c_str(), true, [this] { openEmuELECSettings(); }, "iconEmuelec");
@@ -1217,7 +1217,7 @@ void GuiMenu::openDeveloperSettings()
 
 void GuiMenu::openUpdatesSettings()
 {
-	GuiSettings *updateGui = new GuiSettings(mWindow, _("DOWNLOADS").c_str());
+	GuiSettings *updateGui = new GuiSettings(mWindow, _("UPDATES & DOWNLOADS").c_str());
 
 	updateGui->addGroup(_("DOWNLOADS"));
 
@@ -1266,49 +1266,52 @@ void GuiMenu::openUpdatesSettings()
 	//	});
 	//}
 
-	//updateGui->addGroup(_("SOFTWARE UPDATES"));
+	updateGui->addGroup(_("SOFTWARE UPDATES"));
 
 	// Enable updates
-	//auto updates_enabled = std::make_shared<SwitchComponent>(mWindow);
-	//updates_enabled->setState(SystemConf::getInstance()->getBool("updates.enabled"));
+	auto updates_enabled = std::make_shared<SwitchComponent>(mWindow);
+	updates_enabled->setState(SystemConf::getInstance()->getBool("updates.enabled"));
 
-	//updateGui->addWithLabel(_("CHECK FOR UPDATES"), updates_enabled);
-	//updateGui->addSaveFunc([updates_enabled]
-	//{
-	//	SystemConf::getInstance()->setBool("updates.enabled", updates_enabled->getState());
-	//});
+	updateGui->addWithLabel(_("CHECK FOR UPDATES"), updates_enabled);
+	updateGui->addSaveFunc([updates_enabled]
+	{
+		SystemConf::getInstance()->setBool("updates.enabled", updates_enabled->getState());
+	});
 
 	// Update Bands
-	// auto updatesTypeList = std::make_shared<OptionListComponent<std::string> >(mWindow, _("UPDATE CHANNEL"), false);
+	auto updatesTypeList = std::make_shared<OptionListComponent<std::string> >(mWindow, _("UPDATE CHANNEL"), false);
 
-	// std::string updatesType = SystemConf::getInstance()->get("updates.type");
-	// if (updatesType.empty())
-	//	updatesType = "daily";
+	std::string updatesType = SystemConf::getInstance()->get("updates.type");
+	
+	//old default was 'daily' - so update to release if they have 'daily' set.
+	if (updatesType.empty() || updatesType == "daily")
+		updatesType = "release";
 
-	// updatesTypeList->add("daily", "daily", updatesType == "daily");
+	updatesTypeList->add("release", "release", updatesType == "release");
+	updatesTypeList->add("beta", "beta", updatesType == "beta");
 
-	// updateGui->addWithLabel(_("UPDATE CHANNEL"), updatesTypeList);
-	// updatesTypeList->setSelectedChangedCallback([](std::string name)
-	// {
-	// 	if (SystemConf::getInstance()->set("updates.type", name))
-	// 		SystemConf::getInstance()->saveSystemConf();
-	// });
+	updateGui->addWithLabel(_("UPDATE CHANNEL"), updatesTypeList);
+	updatesTypeList->setSelectedChangedCallback([](std::string name)
+	{
+		if (SystemConf::getInstance()->set("updates.type", name))
+			SystemConf::getInstance()->saveSystemConf();
+	});
 
 	// Start update
-	//updateGui->addEntry(GuiUpdate::state == GuiUpdateState::State::UPDATE_READY ? _("APPLY UPDATE") : _("START UPDATE"), true, [this]
-	//{
-	//	if (GuiUpdate::state == GuiUpdateState::State::UPDATE_READY)
-	//		quitES(QuitMode::RESTART);
-	//	else if (GuiUpdate::state == GuiUpdateState::State::UPDATER_RUNNING)
-	//		mWindow->pushGui(new GuiMsgBox(mWindow, _("UPDATE IS ALREADY RUNNING")));
-	//	else
-	//	{
-	//		if (!checkNetwork())
-	//			return;
+	updateGui->addEntry(GuiUpdate::state == GuiUpdateState::State::UPDATE_READY ? _("APPLY UPDATE") : _("START UPDATE"), true, [this]
+	{
+		if (GuiUpdate::state == GuiUpdateState::State::UPDATE_READY)
+			quitES(QuitMode::RESTART);
+		else if (GuiUpdate::state == GuiUpdateState::State::UPDATER_RUNNING)
+			mWindow->pushGui(new GuiMsgBox(mWindow, _("UPDATE IS ALREADY RUNNING")));
+		else
+		{
+			if (!checkNetwork())
+				return;
 
-	//		mWindow->pushGui(new GuiUpdate(mWindow));
-	//	}
-	//});
+			mWindow->pushGui(new GuiUpdate(mWindow));
+		}
+	});
 	mWindow->pushGui(updateGui);
 }
 
