@@ -1286,7 +1286,10 @@ void GuiMenu::openUpdatesSettings()
 	//old default was 'daily' - so update to release if they have 'daily' set.
 	if (updatesType.empty() || updatesType == "daily")
 		updatesType = "release";
-
+		
+	        //immediately save if we are setting value
+	        SystemConf::getInstance()->saveSystemConf();
+	
 	updatesTypeList->add("release", "release", updatesType == "release");
 	updatesTypeList->add("beta", "beta", updatesType == "beta");
 
