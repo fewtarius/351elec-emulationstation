@@ -294,9 +294,9 @@ void Settings::setDefaults()
 
 	// Default notification display time
 	mIntMap["notification.display_time"] = 4;
+	mBoolMap["updates.enabled"] = true;
 
 #if WIN32
-	mBoolMap["updates.enabled"] = true;
 	mBoolMap["global.retroachievements"] = false;
 	mBoolMap["global.retroachievements.hardcore"] = false;
 	mBoolMap["global.retroachievements.leaderboards"] = false;
