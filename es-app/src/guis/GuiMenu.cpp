@@ -1212,10 +1212,21 @@ void GuiMenu::openDeveloperSettings()
 
 	s->addGroup(_("UPDATES"));
 
-	// Allow customizing the github org and repo for testing purposes
-	createInputTextRow(s, _("GITHUB_ORG"), "global.updates.github.org", false);
-	createInputTextRow(s, _("GITHUB_REPO"), "global.updates.github.repo", false);
+	// Allow customizing the github org and repo used to update from
+	// This allows using a different fork/repository to download releases for testing
+	createInputTextRow(s, _("GITHUB ORG"), "updates.github.org", false);
+	createInputTextRow(s, _("GITHUB REPO"), "updates.github.repo", false);
+	
 
+	//Force updates will tell the check script and the update script to always
+	//use an update regardless of the current version on the device.
+	auto forceUpdates = std::make_shared<SwitchComponent>(mWindow);
+	forceUpdates->setState(SystemConf::getInstance()->getBool("updates.force"));
+    s->addWithLabel(_("FORCE UPDATES"), forceUpdates);
+	s->addSaveFunc([forceUpdates]
+	{
+		SystemConf::getInstance()->setBool("updates.force", forceUpdates->getState());
+	});
 	mWindow->pushGui(s);
 }
 
