@@ -1210,7 +1210,11 @@ void GuiMenu::openDeveloperSettings()
 	s->addWithLabel(_("OPTIMIZE VIDEO VRAM USE"), optimizeVideo);
 	s->addSaveFunc([optimizeVideo] { Settings::getInstance()->setBool("OptimizeVideo", optimizeVideo->getState()); });
 
+	s->addGroup(_("UPDATES"));
 
+	// Allow customizing the github org and repo for testing purposes
+	createInputTextRow(s, _("GITHUB_ORG"), "global.updates.github.org", false);
+	createInputTextRow(s, _("GITHUB_REPO"), "global.updates.github.repo", false);
 
 	mWindow->pushGui(s);
 }
