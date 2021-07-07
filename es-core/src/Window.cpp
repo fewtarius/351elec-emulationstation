@@ -241,7 +241,8 @@ void Window::input(InputConfig* config, Input input)
 	}
 
 	mTimeSinceLastInput = 0;
-	if (cancelScreenSaver())
+	// Only cancel screensave if a 'mapped' button is pushed (not volume, etc)
+	if (config->getMappedTo(input).size() > 0 && cancelScreenSaver())
 		return;
 
 	if (config->getDeviceId() == DEVICE_KEYBOARD && input.value && input.id == SDLK_g && SDL_GetModState() & KMOD_LCTRL) // && Settings::getInstance()->getBool("Debug"))
