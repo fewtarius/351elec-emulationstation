@@ -564,7 +564,22 @@ void Window::render()
 
 	unsigned int screensaverTime = (unsigned int)Settings::getInstance()->getInt("ScreenSaverTime");
 	if (mTimeSinceLastInput >= screensaverTime && screensaverTime != 0)
-		startScreenSaver();
+	{
+
+		// If we just woke up from sleep, treat that like a button press
+		// and restart the screensaver timer
+		auto lastResumeFile = "/run/.last_sleep_time";
+		if (Utils::FileSystem::exists(lastResumeFile))
+		{
+			mTimeSinceLastInput = 0;
+			Utils::FileSystem::removeFile(lastResumeFile);
+			return;
+		}
+		else 
+		{
+			startScreenSaver();
+		}
+	}
 
 	// Render notifications
 	if (!mRenderScreenSaver)
